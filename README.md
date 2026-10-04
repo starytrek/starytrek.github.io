@@ -24,3 +24,6 @@ Dodaj nowy identyfikator wersji w katalogu `study_tests`, nie zmieniaj pytań is
 
 ## Matematyka — klasa 8
 Jeden temat „Liczby i działania” zawiera trzy stałe zestawy po 20 pytań: łatwy, średni i trudny. Poziom jest wybierany przez parametr `poziom`; każdy zestaw ma osobny identyfikator wyników. Katalog bazy: `db/math-numbers.sql`. Zadania są autorskie. Trudność materiałów jest niezależna od zakresu podstawowego/rozszerzonego w liceum.
+
+## Planety mnożenia
+`gry/planety-mnozenie.html`: gra dla 5 klasy, 10 losowanych działań 2–10, samolot w centrum, obrót i strzał do planety z poprawnym wynikiem. Telefon: suwak i przycisk; komputer: strzałki/A/D i spacja. Trzy osłony, pauza i podsumowanie działań do powtórki. Najlepszy wynik zapisuje się lokalnie dla wybranego imienia; gra nie zapisuje prób w bazie testów.
