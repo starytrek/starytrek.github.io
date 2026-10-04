@@ -21,3 +21,6 @@ Przy braku połączenia odpowiedzi czekają lokalnie na ponowny zapis; reset arc
 ### Nowy test
 
 Dodaj nowy identyfikator wersji w katalogu `study_tests`, nie zmieniaj pytań istniejącej wersji po zapisaniu wyników. Zintegruj `Study.attach` z przyciskami odpowiedzi, podsumowania i resetu. Dodaj kartę w `index.html`.
+
+## Matematyka — klasa 8
+Jeden temat „Liczby i działania” zawiera trzy stałe zestawy po 20 pytań: łatwy, średni i trudny. Poziom jest wybierany przez parametr `poziom`; każdy zestaw ma osobny identyfikator wyników. Katalog bazy: `db/math-numbers.sql`. Zadania są autorskie. Trudność materiałów jest niezależna od zakresu podstawowego/rozszerzonego w liceum.
