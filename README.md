@@ -1,4 +1,4 @@
-# Starytrek · Nauka
+# NaukoGramy · Nauka
 
 Portal z testami interaktywnymi: biologia, chemia i geografia.
 
