@@ -15,7 +15,8 @@ function clubTrack(){return CLUB_TRACKS[Number(trackPicker.value)||0];}
 function clubSource(){const t=clubTrack();clubPlayer.src='https://incompetech.com/music/royalty-free/mp3-royaltyfree/'+encodeURIComponent(t.name)+'.mp3';}
 function clubState(on){clubMusicOn=on;document.body.classList.toggle('music-on',on);musicButton.textContent=on?'Ⅱ Pauza':'♫ Graj';musicButton.setAttribute('aria-pressed',String(on));}
 function stopClubMusic(){++clubPlayRequest;clubPlayer.pause();clubState(false);musicStatus.textContent='';}
-async function playClubMusic(){const request=++clubPlayRequest;musicStatus.textContent='Ładowanie…';try{await clubPlayer.play();if(request!==clubPlayRequest)return;clubState(true);musicStatus.textContent='';}catch{if(request!==clubPlayRequest)return;clubState(false);musicStatus.textContent='Nie udało się odtworzyć. Wybierz inny utwór lub spróbuj ponownie.';}}
+async function playClubMusic(){const request=++clubPlayRequest;musicStatus.textContent='Ładowanie…';clubState(true);try{await clubPlayer.play();if(request!==clubPlayRequest)return;clubState(true);musicStatus.textContent='';}catch{if(request!==clubPlayRequest)return;clubState(false);musicStatus.textContent='Nie udało się odtworzyć. Wybierz inny utwór lub spróbuj ponownie.';}}
+clubPlayer.addEventListener('playing',()=>{if(clubMusicOn)musicStatus.textContent='';});
 clubSource();
 musicButton.onclick=()=>clubMusicOn?stopClubMusic():playClubMusic();
 trackPicker.onchange=()=>{const resume=clubMusicOn;stopClubMusic();clubSource();try{localStorage.setItem('naukogramy.restaurant.track',trackPicker.value);}catch{}if(resume)playClubMusic();};
