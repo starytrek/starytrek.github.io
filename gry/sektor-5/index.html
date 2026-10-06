@@ -88,7 +88,7 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
 
 const canvas=document.getElementById("c");
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -156,7 +156,7 @@ function randQuestions(count,groups=[]){
 }
 
 function mat(color,rough=.75,metal=.08){return new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal})}
-const M={wall:mat(0x687581,.9),dark:mat(0x252d34,.9),floor:mat(0x2a3339,.8),white:mat(0xd8dde0,.75),steel:mat(0x52616a,.45,.45),red:mat(0x8c2525,.7),green:mat(0x315b43,.8),blue:mat(0x284d6a,.75),yellow:mat(0x9d782f,.8),black:mat(0x11161a,.8)};
+const M={wall:mat(0x6f8191,.82),dark:mat(0x26313a,.9),floor:mat(0x2d3940,.8),white:mat(0xe7edf0,.7),steel:mat(0x667985,.35,.55),red:mat(0xb22f39,.6),green:mat(0x3c8c63,.7),blue:mat(0x2d73a9,.65),yellow:mat(0xc79b34,.68),orange:mat(0xd66c2c,.68),purple:mat(0x684b8f,.7),cyan:mat(0x2b9fbe,.58),black:mat(0x11161a,.8)};
 
 function clearWorld(){
  while(world.children.length){const o=world.children.pop();o.traverse(x=>{if(x.geometry)x.geometry.dispose()})}
@@ -202,10 +202,39 @@ function monitor(x,z,ry=0,broken=false){
 function crate(x,z,rot=0){const c=box(x,.3,z,.72,.6,.72,M.yellow,false);c.rotation.y=rot;return c}
 function lamp(x,z,color=0xff2c2c,intensity=4){const l=new THREE.PointLight(color,intensity,7,2);l.position.set(x,2.7,z);world.add(l);return l}
 function station(id,title,tag,x,z,groups,count=3){
- const base=box(x,.65,z,.75,1.3,.48,M.black,false);const scr=new THREE.Mesh(new THREE.PlaneGeometry(.58,.36),new THREE.MeshBasicMaterial({color:0x18b7df}));scr.position.set(x,1.02,z-.245);world.add(scr);
+ const base=box(x,.65,z,.75,1.3,.48,M.black,false);const scolor=tag==="STEROWNIA"?0xff3c3c:tag==="ARCHIWUM"?0xb16cff:tag==="MAGAZYN"?0xffc44d:0x18c9ef;const scr=new THREE.Mesh(new THREE.PlaneGeometry(.58,.36),new THREE.MeshStandardMaterial({color:scolor,emissive:scolor,emissiveIntensity:2.2,roughness:.25}));scr.position.set(x,1.02,z-.245);world.add(scr);
  stations.push({id,title,tag,pos:new THREE.Vector3(x,0,z),groups,count,done:false});
 }
 function ceilingLight(x,z,color=0xc7ecff,intensity=1.5){const l=new THREE.RectAreaLight(color,intensity,3,1);l.position.set(x,3.1,z);l.rotation.x=-Math.PI/2;world.add(l)}
+
+function floorZone(x,z,w,d,color,opacity=.92){
+ const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshStandardMaterial({color,roughness:.7,transparent:true,opacity}));
+ mesh.rotation.x=-Math.PI/2;mesh.position.set(x,.006,z);mesh.receiveShadow=true;world.add(mesh);return mesh;
+}
+function hazardStrip(x,z,w,d,rot=0){
+ const g=new THREE.Group();
+ for(let i=0;i<10;i++){const m=new THREE.Mesh(new THREE.BoxGeometry(w/10,.018,d),i%2?M.yellow:M.black);m.position.x=-w/2+w/20+i*w/10;g.add(m)}
+ g.position.set(x,.02,z);g.rotation.y=rot;world.add(g);return g;
+}
+function doorFrame(x,z,ry=0,color=0x2d73a9,label=""){
+ const g=new THREE.Group();
+ const mm=new THREE.MeshStandardMaterial({color,roughness:.5,metalness:.35});
+ const a=new THREE.Mesh(new THREE.BoxGeometry(.16,2.8,.18),mm),b=a.clone(),top=new THREE.Mesh(new THREE.BoxGeometry(1.8,.16,.18),mm);
+ a.position.set(-.82,1.4,0);b.position.set(.82,1.4,0);top.position.set(0,2.72,0);g.add(a,b,top);
+ g.position.set(x,0,z);g.rotation.y=ry;world.add(g);
+ if(label){const sx=x+Math.sin(ry)*.11,sz=z+Math.cos(ry)*.11;sign(label,sx,2.45,sz,ry,1.55,.36,"#10161d","#ffffff",color===0xb22f39?"#ff5151":"#55d8ff")}
+ return g;
+}
+function beacon(x,z,color=0xff3030){
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.35,12),M.dark);pole.position.set(x,2.72,z);world.add(pole);
+ const bulb=new THREE.Mesh(new THREE.SphereGeometry(.12,14,10),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:3}));bulb.position.set(x,2.95,z);world.add(bulb);
+ const l=new THREE.PointLight(color,4.2,7,2);l.position.set(x,2.75,z);world.add(l);return l;
+}
+function glowingPanel(text,x,y,z,ry,color="#00d9ff"){
+ const c=document.createElement("canvas");c.width=768;c.height=256;const g=c.getContext("2d");g.fillStyle="#061018";g.fillRect(0,0,768,256);g.strokeStyle=color;g.lineWidth=12;g.strokeRect(10,10,748,236);g.fillStyle=color;g.font="900 54px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(text,384,128);
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(2.6,.86),new THREE.MeshBasicMaterial({map:t}));m.position.set(x,y,z);m.rotation.y=ry;world.add(m);return m;
+}
+
 function commonLights(){
  scene.children.filter(o=>o.isLight&&o!==scene.children[0]).forEach(()=>{});
  const hemi=new THREE.HemisphereLight(0xb7d8ee,0x182028,1.15);world.add(hemi);
@@ -213,44 +242,44 @@ function commonLights(){
 }
 
 function buildA(){
- clearWorld();scene.background.set(0x071019);scene.fog.color.set(0x071019);floor(26,22,0x263139);commonLights();
+ clearWorld();scene.background.set(0x08141d);scene.fog.color.set(0x08141d);floor(26,22,0x263139);commonLights();floorZone(-8,4,7,9,0x234f70,.55);floorZone(8,-5,8,8,0x5a4720,.48);floorZone(2,5,4,4,0x3c2757,.42);
  wall(0,-10,26,.4);wall(0,10,26,.4);wall(-13,0,.4,20);wall(13,0,.4,20);
  wall(-4,-2,.35,10);wall(5,3,.35,13);wall(8,-3,10,.35);
- sign("SEKTOR 5",0,2.4,-9.78,0,4,1);sign("MAGAZYN PRÓBEK",8.7,2.2,-2.8,0,3.2,.7,"#161b20","#ffd991","#ffc45c");
+ sign("SEKTOR 5",0,2.4,-9.78,0,4,1,"#0c1b26","#ffffff","#48d7ff");sign("MAGAZYN PRÓBEK",8.7,2.2,-2.8,0,3.2,.7,"#211c12","#ffe2a0","#ffc45c");doorFrame(-4,-2,0,0x2d73a9,"LAB A");doorFrame(5,3,0,0xc79b34,"MAGAZYN");hazardStrip(7.8,-2.6,4.5,.55,0);glowingPanel("DOSTĘP A",-2.1,1.7,-1.79,0,"#59d8ff");
  desk(-8,6);monitor(-8,5.55);desk(-8,2);monitor(-8,1.55);shelf(9,-6);shelf(9,-5,Math.PI);shelf(11,-6);
  for(let i=0;i<9;i++)bottle(8+(i%3)*.5,-6.4+Math.floor(i/3)*.45,i%2?0xa9e264:0x7dd7ff,.9);
  crate(2,5,.3);crate(3,5.4,-.4);ceilingLight(-7,2);ceilingLight(1,2);ceilingLight(9,-5);
  station("a1","Terminal wejściowy","AUTORYZACJA",-10,7,["general","nitric","compare"],3);
  station("a2","Rejestr próbek","MAGAZYN",10,-7,["nitric","safety","count"],3);
- lamp(12,-8,0xff3030,3);player.x=-10;player.z=8;yaw=0;
+ beacon(12,-8,0xff3030);beacon(-11,-8,0xffb12e);lamp(-6,7,0x2dafff,2.4);player.x=-10;player.z=8;yaw=0;
 }
 function buildB(){
- clearWorld();scene.background.set(0x0a1014);scene.fog.color.set(0x0a1014);floor(28,24,0x313537);commonLights();
+ clearWorld();scene.background.set(0x0b1115);scene.fog.color.set(0x0b1115);floor(28,24,0x30383d);commonLights();floorZone(-7,6,12,7,0x215d68,.42);floorZone(9,6,7,8,0x664b1d,.38);floorZone(-9,-5,7,7,0x3b2a5f,.38);
  wall(0,-11,28,.4,M.white);wall(0,11,28,.4,M.white);wall(-14,0,.4,22,M.white);wall(14,0,.4,22,M.white);
  wall(0,1,18,.3,M.white);wall(-5,-5,.3,12,M.white);wall(7,-5,.3,12,M.white);
- sign("LABORATORIUM ANALITYCZNE",-1,2.3,-10.78,0,5.5,.8,"#e9eef0","#17242d","#17a7d0");
+ sign("LABORATORIUM ANALITYCZNE",-1,2.3,-10.78,0,5.5,.8,"#e9eef0","#17242d","#17a7d0");doorFrame(-5,-5,0,0x2b9fbe,"ANALIZA");doorFrame(7,-5,0,0x684b8f,"ARCHIWUM");hazardStrip(-1,1.2,6,.55,0);glowingPanel("ANALIZATOR",-9.7,1.8,-6.72,0,"#3ce6ff");
  sign("ARCHIWUM",10,2.2,1.18,Math.PI,2.6,.7,"#1d252a","#e8edf0","#ffc45c");
  for(const x of [-9,-5,-1,3]){desk(x,6);monitor(x,5.55,false)}
  for(let x=-10;x<=4;x+=2){bottle(x,4.8,0x8fd5ff);bottle(x+.3,4.8,0xf1d277)}
  shelf(10,7);shelf(10,5);shelf(12,6,Math.PI/2);crate(11,9,.2);
  graffiti("H3PO3 ?",2,2.2,1.16,Math.PI,"#d93434");
  sign("NIEZGODNOŚĆ DANYCH",1,1.7,-.88,0,3.5,.65,"#331516","#ffdcdc","#ff5151");
- ceilingLight(-8,7);ceilingLight(0,7);ceilingLight(8,7);ceilingLight(-9,-5);ceilingLight(9,-5);
+ ceilingLight(-8,7,0xbfeeff,2.2);ceilingLight(0,7,0xbfeeff,2.2);ceilingLight(8,7,0xffdda0,1.8);ceilingLight(-9,-5,0xd7c7ff,1.7);ceilingLight(9,-5,0xbfeeff,2);beacon(12,9,0xffa629);
  station("b1","Analizator substancji","ANALIZATOR",-10,-7,["phosphoric","compare","count"],3);
  station("b2","Archiwum raportów","ARCHIWUM",10,8,["report","phosphoric","use"],3);
  player.x=0;player.z=9;yaw=Math.PI;
 }
 function buildC(){
- clearWorld();scene.background.set(0x09090b);scene.fog.color.set(0x09090b);floor(30,24,0x1f2427);commonLights();
+ clearWorld();scene.background.set(0x0a0a0c);scene.fog.color.set(0x0a0a0c);floor(30,24,0x202326);commonLights();floorZone(-10,5,7,8,0x5c1d24,.42);floorZone(10,-6,7,8,0x1f4568,.35);floorZone(0,0,6,5,0x5b3717,.28);
  wall(0,-11,30,.4,M.dark);wall(0,11,30,.4,M.dark);wall(-15,0,.4,22,M.dark);wall(15,0,.4,22,M.dark);
  wall(-6,-3,.35,12,M.dark);wall(5,3,.35,14,M.dark);wall(1,-4,12,.35,M.dark);
- graffiti("CERBER KŁAMIE",-1,2.2,-10.76,0,"#ff3939");graffiti("NO3 ≠ PO4",8,2.0,10.76,Math.PI,"#ffb02e");
+ graffiti("CERBER KŁAMIE",-1,2.2,-10.76,0,"#ff3939");graffiti("NO3 ≠ PO4",8,2.0,10.76,Math.PI,"#ffb02e");graffiti("WYJDŹ",11,1.9,-10.74,0,"#8d5cff");doorFrame(-6,-3,0,0xb22f39,"STREFA X");doorFrame(5,3,0,0xd66c2c,"STEROWNIA");hazardStrip(-5.5,-2.7,4.5,.6,0);hazardStrip(5.5,2.7,4.5,.6,0);
  sign("STEROWNIA",-10,2.2,3,Math.PI/2,2.7,.75,"#18191b","#d9f5ff","#ff3d3d");
  for(let i=0;i<5;i++){crate(-2+i*.9,6+(i%2)*.6,i*.35)}
  desk(9,-7,.2);monitor(9,-7.45,.2,true);desk(9,-4,-.35);monitor(9,-4.45,-.35,true);
  box(2,.15,-7,2.6,.3,.7,M.dark,false).rotation.z=.18;
  const broken=box(-3,.55,-6,.1,1.1,2.3,M.steel,false);broken.rotation.z=1.1;
- lamp(-12,7,0xff1f1f,5);lamp(12,-8,0xff1f1f,5);lamp(0,0,0xff7518,2.5);
+ beacon(-12,7,0xff1f1f);beacon(12,-8,0xff1f1f);beacon(0,0,0xff7a1a);lamp(-8,-6,0x7f4cff,2.6);lamp(9,7,0x247cff,2.6);glowingPanel("CERBER",-10.6,2.0,5.78,0,"#ff4545");
  station("c1","Terminal bezpieczeństwa","SEKTOR NARUSZONY",11,-8,["safety","report","compare"],3);
  station("c2","CERBER — protokół końcowy","STEROWNIA",-11,6,["final","nitric","phosphoric","report"],5);
  player.x=12;player.z=8;yaw=Math.PI;
