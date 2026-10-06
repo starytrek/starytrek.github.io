@@ -95,7 +95,7 @@ const MAP=[
 "1000660000770001",
 "1000000000000001",
 "1111111111111111"];
-const COLORS={1:"#31516d",2:"#4d8e9d",3:"#806d3f",4:"#5d3b70",5:"#365f46",6:"#7c4343",7:"#3f587f"};
+const COLORS={1:"#52697b",2:"#4d8e9d",3:"#806d3f",4:"#5d3b70",5:"#365f46",6:"#7c4343",7:"#3f587f"};
 const W=16,H=16;
 let px=3.5,py=1.5,pa=Math.PI/2,score=0,evidence=0,currentObjective=0,started=false,keys={},last=0;
 const objectives=[
@@ -122,19 +122,19 @@ final:{tag:"CERBER",title:"Protokół końcowy",text:"Wybierz poprawną parę na
 const completed=new Set();
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight}addEventListener("resize",resize);resize();
 function cell(x,y){const ix=Math.floor(x),iy=Math.floor(y);if(ix<0||iy<0||ix>=W||iy>=H)return "1";return MAP[iy][ix]}
-function blocked(x,y){return cell(x,y)!=="0"}
-function cast(angle){let d=0;const step=.025;while(d<20){d+=step;const x=px+Math.cos(angle)*d,y=py+Math.sin(angle)*d;if(blocked(x,y))return {d,wall:cell(x,y)} }return {d:20,wall:"1"}}
+function blocked(x,y){return cell(x,y)==="1"}
+function cast(angle){let d=0;const step=.025;while(d<20){d+=step;const x=px+Math.cos(angle)*d,y=py+Math.sin(angle)*d;if(cell(x,y)==="1")return {d,wall:"1"} }return {d:20,wall:"1"}}
 function render(){
- const w=canvas.width,h=canvas.height;ctx.fillStyle="#07111a";ctx.fillRect(0,0,w,h/2);ctx.fillStyle="#111820";ctx.fillRect(0,h/2,w,h/2);
+ const w=canvas.width,h=canvas.height;ctx.fillStyle="#0b1721";ctx.fillRect(0,0,w,h/2);ctx.fillStyle="#151b21";ctx.fillRect(0,h/2,w,h/2);ctx.strokeStyle="#243746";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
  const fov=Math.PI/3;for(let x=0;x<w;x+=2){const a=pa-fov/2+(x/w)*fov;const hit=cast(a);const dist=hit.d*Math.cos(a-pa);const wallH=Math.min(h,h/(dist*.8));const shade=Math.max(.22,1-dist/14);const c=COLORS[hit.wall]||"#31516d";ctx.globalAlpha=shade;ctx.fillStyle=c;ctx.fillRect(x,h/2-wallH/2,2,wallH);ctx.globalAlpha=1}
  drawMini();updateHint();
 }
 function drawMini(){const s=mini.width/16;mctx.clearRect(0,0,mini.width,mini.height);for(let y=0;y<H;y++)for(let x=0;x<W;x++){const c=MAP[y][x];mctx.fillStyle=c==="0"?"#0c1822":(COLORS[c]||"#30485b");mctx.fillRect(x*s,y*s,s,s)}mctx.fillStyle="#fff";mctx.beginPath();mctx.arc(px*s,py*s,3.5,0,Math.PI*2);mctx.fill();mctx.strokeStyle="#55d6ff";mctx.beginPath();mctx.moveTo(px*s,py*s);mctx.lineTo((px+Math.cos(pa)*.7)*s,(py+Math.sin(pa)*.7)*s);mctx.stroke()}
 function nearest(){let best=null,bd=99;for(const it of interactions){if(completed.has(it.id))continue;const d=Math.hypot(px-it.x,py-it.y);if(d<bd){bd=d;best=it}}return bd<1.45?best:null}
 function updateHint(){document.getElementById("hint").style.opacity=nearest()?1:0}
-function move(dt){const sp=2.3*dt,rs=1.8*dt;let nx=px,ny=py;if(keys["w"]){nx+=Math.cos(pa)*sp;ny+=Math.sin(pa)*sp}if(keys["s"]){nx-=Math.cos(pa)*sp;ny-=Math.sin(pa)*sp}if(keys["a"]){nx+=Math.cos(pa-Math.PI/2)*sp;ny+=Math.sin(pa-Math.PI/2)*sp}if(keys["d"]){nx+=Math.cos(pa+Math.PI/2)*sp;ny+=Math.sin(pa+Math.PI/2)*sp}if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;if(keys["arrowleft"])pa-=rs;if(keys["arrowright"])pa+=rs}
+function move(dt){const sp=2.3*dt,rs=1.8*dt;let nx=px,ny=py;if(keys["w"]||keys["keyw"]){nx+=Math.cos(pa)*sp;ny+=Math.sin(pa)*sp}if(keys["s"]||keys["keys"]){nx-=Math.cos(pa)*sp;ny-=Math.sin(pa)*sp}if(keys["a"]||keys["keya"]){nx+=Math.cos(pa-Math.PI/2)*sp;ny+=Math.sin(pa-Math.PI/2)*sp}if(keys["d"]||keys["keyd"]){nx+=Math.cos(pa+Math.PI/2)*sp;ny+=Math.sin(pa+Math.PI/2)*sp}if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;if(keys["arrowleft"])pa-=rs;if(keys["arrowright"])pa+=rs}
 function loop(t){const dt=Math.min(.04,(t-last)/1000||0);last=t;if(started){move(dt);render()}requestAnimationFrame(loop)}requestAnimationFrame(loop);
-addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==="e"&&started){const n=nearest();if(n)openTask(n.id)}});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();keys[k]=true;keys[e.code.toLowerCase()]=true;if(["w","a","s","d","arrowleft","arrowright"].includes(k))e.preventDefault();if(k==="e"&&started){const n=nearest();if(n)openTask(n.id)}});addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false;keys[e.code.toLowerCase()]=false});
 canvas.addEventListener("click",()=>{if(started&&document.pointerLockElement!==canvas)canvas.requestPointerLock()});
 addEventListener("mousemove",e=>{if(document.pointerLockElement===canvas&&started)pa+=e.movementX*.0024});
 document.getElementById("startBtn").onclick=()=>{document.getElementById("start").hidden=true;started=true;canvas.requestPointerLock().catch(()=>{});render()};
