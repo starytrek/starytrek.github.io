@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEKTOR 5 · NaukoGramy</title>
+<meta name="description" content="SEKTOR 5 — fabularna gra FPP z chemii dla 8 klasy: kwas azotowy(V) i fosforowy(V).">
+<style>
+:root{--ink:#e9f3ff;--muted:#9bb0c6;--panel:#0d1722;--line:#29445d;--cyan:#55d6ff;--good:#46d17d;--bad:#ff6d6d}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#050a0f;color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+button{font:inherit;cursor:pointer}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block;background:#071019}
+#hud{position:fixed;inset:0;pointer-events:none}
+.topbar{position:absolute;left:16px;right:16px;top:14px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.box{background:#08131dcc;border:1px solid #29445dcc;backdrop-filter:blur(6px);border-radius:12px;padding:10px 12px;box-shadow:0 8px 30px #0008}
+.title{font-weight:900;letter-spacing:.08em}.title small{display:block;color:var(--muted);font-size:11px;letter-spacing:.16em}.stats{display:flex;gap:14px;font-size:13px}.stats b{color:#fff}
+#objective{position:absolute;left:16px;bottom:18px;max-width:min(520px,calc(100% - 32px));background:#08131dd9;border:1px solid #29445d;border-radius:12px;padding:11px 13px}
+#objective b{display:block;color:var(--cyan);margin-bottom:3px}
+#hint{position:absolute;left:50%;bottom:86px;transform:translateX(-50%);padding:8px 12px;border:1px solid #44627d;background:#08131de8;border-radius:10px;font-weight:700;opacity:0;transition:.15s}
+#cross{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%)}#cross:before,#cross:after{content:"";position:absolute;background:#fff9}#cross:before{width:18px;height:2px;top:8px}#cross:after{height:18px;width:2px;left:8px}
+#start,#dialog,#complete{position:fixed;inset:0;display:grid;place-items:center;background:#02070bd9;z-index:5;padding:20px}
+#dialog[hidden],#complete[hidden],#start[hidden]{display:none}
+.card{width:min(760px,100%);max-height:88vh;overflow:auto;background:#0b1620;border:1px solid #33516b;border-radius:18px;padding:24px;box-shadow:0 30px 80px #000b}
+.eyebrow{font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:.18em;font-weight:800}
+h1{font-size:clamp(36px,7vw,64px);line-height:1;margin:8px 0 12px;letter-spacing:-2px}h2{margin:0 0 10px;font-size:28px}.lead{color:var(--muted);font-size:18px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.key{border:1px solid #35526a;background:#0f2230;border-radius:10px;padding:10px;text-align:center}.key b{display:block;font-size:18px}.primary,.answer{pointer-events:auto;border:1px solid #39708f;background:#123047;color:#fff;border-radius:10px;padding:12px 15px;font-weight:800}.primary:hover,.answer:hover{background:#17405f}.answers{display:grid;gap:10px;margin-top:18px}.answer{text-align:left;width:100%}.answer.good{border-color:#3a9861;background:#123923}.answer.bad{border-color:#a44a4a;background:#3b1717}.feedback{margin-top:14px;border-radius:10px;padding:12px 14px;background:#101f2b;border:1px solid #2f4a60}.muted{color:var(--muted)}.story{border-left:3px solid var(--cyan);padding-left:14px;margin:16px 0;color:#cfe0ef}.row{display:flex;gap:10px;flex-wrap:wrap}.secondary{pointer-events:auto;border:1px solid #52697e;background:#0d1822;color:#e9f3ff;border-radius:10px;padding:11px 14px;font-weight:700}
+#minimap{position:absolute;right:16px;bottom:18px;width:150px;height:150px;background:#07111acc;border:1px solid #29445d;border-radius:12px}
+@media(max-width:760px){.controls{grid-template-columns:repeat(2,1fr)}#minimap{width:112px;height:112px}.topbar{flex-direction:column}.stats{gap:8px;flex-wrap:wrap}.card{padding:18px}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud">
+  <div class="topbar">
+    <div class="box title">SEKTOR 5<small>PROTOKÓŁ AWARYJNY</small></div>
+    <div class="box stats"><span>PUNKTY <b id="score">0</b></span><span>DOWODY <b id="evidence">0/5</b></span><span>SEKTOR <b id="sector">A</b></span></div>
+  </div>
+  <div id="cross"></div>
+  <div id="hint">E — interakcja</div>
+  <div id="objective"><b>CEL</b><span id="objectiveText">Wejdź do laboratorium i uruchom terminal wejściowy.</span></div>
+  <canvas id="minimap" width="150" height="150"></canvas>
+</div>
+
+<div id="start">
+  <div class="card">
+    <div class="eyebrow">NaukoGramy · Chemia · 8 klasa</div>
+    <h1>SEKTOR 5</h1>
+    <p class="lead">O 02:17 laboratorium odcięło się od sieci. System CERBER wykrył błędne oznaczenia dwóch kwasów: azotowego(V) i fosforowego(V). Musisz wejść do środka, znaleźć dowody i przywrócić kontrolę.</p>
+    <div class="story">Nie rozwiązujesz „testu”. Chodzisz po obiekcie, otwierasz pomieszczenia i używasz chemii do odblokowywania systemów.</div>
+    <div class="controls">
+      <div class="key"><b>WASD</b>ruch</div><div class="key"><b>MYSZ</b>rozglądanie</div><div class="key"><b>E</b>interakcja</div><div class="key"><b>ESC</b>uwolnij mysz</div>
+    </div>
+    <p class="muted">Najlepiej działa na komputerze. Kliknij start, potem kliknij planszę, aby przejąć mysz.</p>
+    <button class="primary" id="startBtn">Wejdź do SEKTORA 5</button>
+  </div>
+</div>
+
+<div id="dialog" hidden>
+  <div class="card">
+    <div class="eyebrow" id="dialogTag">TERMINAL</div>
+    <h2 id="dialogTitle"></h2>
+    <p id="dialogText" class="lead"></p>
+    <div class="answers" id="answers"></div>
+    <div id="feedback" class="feedback" hidden></div>
+    <div class="row" style="margin-top:14px"><button class="primary" id="continueBtn" hidden>Kontynuuj</button><button class="secondary" id="closeBtn">Zamknij</button></div>
+  </div>
+</div>
+
+<div id="complete" hidden>
+  <div class="card">
+    <div class="eyebrow">MISJA ZAKOŃCZONA</div>
+    <h1>SEKTOR 5 ODBLOKOWANY</h1>
+    <p class="lead" id="finalText"></p>
+    <div class="story">CERBER: „Identyfikacja substancji potwierdzona. Fałszywe oznaczenia usunięte. Dostęp do laboratorium przywrócony.”</div>
+    <div class="row"><button class="primary" id="restartBtn">Zagraj ponownie</button><a class="secondary" href="../../" style="text-decoration:none">Wróć do NaukoGramy</a></div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+const mini=document.getElementById("minimap"),mctx=mini.getContext("2d");
+const MAP=[
+"1111111111111111",
+"1000001000000001",
+"1020001000330001",
+"1000001000000001",
+"1000000000000001",
+"1111011111101111",
+"1000000000000001",
+"1000440000005501",
+"1000440000005501",
+"1000000000000001",
+"1111101111011111",
+"1000000000000001",
+"1000660000770001",
+"1000660000770001",
+"1000000000000001",
+"1111111111111111"];
+const COLORS={1:"#31516d",2:"#4d8e9d",3:"#806d3f",4:"#5d3b70",5:"#365f46",6:"#7c4343",7:"#3f587f"};
+const W=16,H=16;
+let px=2.5,py=2.5,pa=0,score=0,evidence=0,currentObjective=0,started=false,keys={},last=0;
+const objectives=[
+"Uruchom terminal wejściowy w północnym laboratorium.",
+"Znajdź magazyn próbek i rozpoznaj HNO₃.",
+"Odszukaj archiwum i sprawdź dane H₃PO₄.",
+"Przejdź do sterowni i napraw błędny raport.",
+"Uruchom końcowy protokół CERBER."
+];
+const interactions=[
+{x:2.5,y:2.5,r:1.0,id:"entry"},
+{x:11.5,y:2.5,r:1.3,id:"nitric"},
+{x:4.5,y:7.5,r:1.3,id:"phosphoric"},
+{x:12.5,y:8.0,r:1.3,id:"report"},
+{x:6.5,y:12.5,r:1.4,id:"final"}
+];
+const tasks={
+entry:{tag:"TERMINAL A-01",title:"Autoryzacja chemiczna",text:"Który wzór należy do kwasu azotowego(V)?",a:["HNO₃","HNO₂","H₃PO₄","H₂SO₄"],c:0,ex:"Kwas azotowy(V) ma wzór HNO₃.",points:10},
+nitric:{tag:"MAGAZYN PRÓBEK",title:"Próbka N-5",text:"W pojemniku wykryto resztę kwasową NO₃. Jak nazywa się odpowiadający jej kwas?",a:["kwas azotawy(III)","kwas azotowy(V)","kwas fosforowy(V)","kwas siarkowy(VI)"],c:1,ex:"Reszta NO₃ pochodzi od HNO₃, czyli kwasu azotowego(V).",points:15},
+phosphoric:{tag:"ARCHIWUM",title:"Plik P-5",text:"Który zapis poprawnie opisuje kwas fosforowy(V)?",a:["H₃PO₄ — kwas tlenowy, trójprotonowy","HPO₃ — kwas beztlenowy","H₃PO₃ — kwas fosforowy(V)","H₂PO₄ — kwas jednoprotonowy"],c:0,ex:"H₃PO₄ to kwas fosforowy(V); zawiera tlen i ma trzy atomy wodoru.",points:15},
+report:{tag:"STEROWNIA",title:"Fałszywy raport",text:"W raporcie zapisano: „Kwas fosforowy(V): H₃PO₃”. Co jest nie tak?",a:["Wszystko jest poprawne","Powinno być H₃PO₄","Powinno być HNO₃","Powinno być H₂SO₃"],c:1,ex:"H₃PO₄ to kwas fosforowy(V). H₃PO₃ oznacza inny kwas.",points:20},
+final:{tag:"CERBER",title:"Protokół końcowy",text:"Wybierz poprawną parę nazwa–wzór.",a:["kwas azotowy(V) — HNO₃; kwas fosforowy(V) — H₃PO₄","kwas azotowy(V) — HNO₂; kwas fosforowy(V) — H₃PO₃","kwas azotowy(V) — H₃PO₄; kwas fosforowy(V) — HNO₃","kwas azotowy(V) — H₂SO₄; kwas fosforowy(V) — HCl"],c:0,ex:"To poprawne podstawowe wzory obu kwasów.",points:40}
+};
+const completed=new Set();
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}addEventListener("resize",resize);resize();
+function cell(x,y){const ix=Math.floor(x),iy=Math.floor(y);if(ix<0||iy<0||ix>=W||iy>=H)return "1";return MAP[iy][ix]}
+function blocked(x,y){return cell(x,y)!=="0"}
+function cast(angle){let d=0;const step=.025;while(d<20){d+=step;const x=px+Math.cos(angle)*d,y=py+Math.sin(angle)*d;if(blocked(x,y))return {d,wall:cell(x,y)} }return {d:20,wall:"1"}}
+function render(){
+ const w=canvas.width,h=canvas.height;ctx.fillStyle="#07111a";ctx.fillRect(0,0,w,h/2);ctx.fillStyle="#111820";ctx.fillRect(0,h/2,w,h/2);
+ const fov=Math.PI/3;for(let x=0;x<w;x+=2){const a=pa-fov/2+(x/w)*fov;const hit=cast(a);const dist=hit.d*Math.cos(a-pa);const wallH=Math.min(h,h/(dist*.8));const shade=Math.max(.22,1-dist/14);const c=COLORS[hit.wall]||"#31516d";ctx.globalAlpha=shade;ctx.fillStyle=c;ctx.fillRect(x,h/2-wallH/2,2,wallH);ctx.globalAlpha=1}
+ drawMini();updateHint();
+}
+function drawMini(){const s=mini.width/16;mctx.clearRect(0,0,mini.width,mini.height);for(let y=0;y<H;y++)for(let x=0;x<W;x++){const c=MAP[y][x];mctx.fillStyle=c==="0"?"#0c1822":(COLORS[c]||"#30485b");mctx.fillRect(x*s,y*s,s,s)}mctx.fillStyle="#fff";mctx.beginPath();mctx.arc(px*s,py*s,3.5,0,Math.PI*2);mctx.fill();mctx.strokeStyle="#55d6ff";mctx.beginPath();mctx.moveTo(px*s,py*s);mctx.lineTo((px+Math.cos(pa)*.7)*s,(py+Math.sin(pa)*.7)*s);mctx.stroke()}
+function nearest(){let best=null,bd=99;for(const it of interactions){if(completed.has(it.id))continue;const d=Math.hypot(px-it.x,py-it.y);if(d<bd){bd=d;best=it}}return bd<1.45?best:null}
+function updateHint(){document.getElementById("hint").style.opacity=nearest()?1:0}
+function move(dt){const sp=2.3*dt,rs=1.8*dt;let nx=px,ny=py;if(keys["w"]){nx+=Math.cos(pa)*sp;ny+=Math.sin(pa)*sp}if(keys["s"]){nx-=Math.cos(pa)*sp;ny-=Math.sin(pa)*sp}if(keys["a"]){nx+=Math.cos(pa-Math.PI/2)*sp;ny+=Math.sin(pa-Math.PI/2)*sp}if(keys["d"]){nx+=Math.cos(pa+Math.PI/2)*sp;ny+=Math.sin(pa+Math.PI/2)*sp}if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;if(keys["arrowleft"])pa-=rs;if(keys["arrowright"])pa+=rs}
+function loop(t){const dt=Math.min(.04,(t-last)/1000||0);last=t;if(started){move(dt);render()}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==="e"&&started){const n=nearest();if(n)openTask(n.id)}});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener("click",()=>{if(started&&document.pointerLockElement!==canvas)canvas.requestPointerLock()});
+addEventListener("mousemove",e=>{if(document.pointerLockElement===canvas&&started)pa+=e.movementX*.0024});
+document.getElementById("startBtn").onclick=()=>{document.getElementById("start").hidden=true;started=true;canvas.requestPointerLock().catch(()=>{});render()};
+function openTask(id){const t=tasks[id];document.exitPointerLock?.();document.getElementById("dialog").hidden=false;document.getElementById("dialogTag").textContent=t.tag;document.getElementById("dialogTitle").textContent=t.title;document.getElementById("dialogText").textContent=t.text;const box=document.getElementById("answers");box.replaceChildren();document.getElementById("feedback").hidden=true;document.getElementById("continueBtn").hidden=true;
+ t.a.forEach((txt,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=txt;b.onclick=()=>answer(id,i,b);box.appendChild(b)})}
+function answer(id,i,b){const t=tasks[id];[...document.querySelectorAll(".answer")].forEach(x=>x.disabled=true);const fb=document.getElementById("feedback");if(i===t.c){b.classList.add("good");fb.textContent="Dobrze. "+t.ex;score+=t.points;completed.add(id);evidence++;currentObjective=Math.min(objectives.length-1,currentObjective+1);document.getElementById("score").textContent=score;document.getElementById("evidence").textContent=evidence+"/5";document.getElementById("objectiveText").textContent=objectives[currentObjective];document.getElementById("continueBtn").hidden=false}else{b.classList.add("bad");[...document.querySelectorAll(".answer")][t.c].classList.add("good");fb.textContent="Błąd. "+t.ex;document.getElementById("continueBtn").hidden=false}fb.hidden=false}
+document.getElementById("continueBtn").onclick=()=>{document.getElementById("dialog").hidden=true;if(completed.size===5){finish()}else canvas.requestPointerLock().catch(()=>{})};
+document.getElementById("closeBtn").onclick=()=>{document.getElementById("dialog").hidden=true;canvas.requestPointerLock().catch(()=>{})};
+function finish(){started=false;document.exitPointerLock?.();const best=Number(localStorage.getItem("naukogramy.sektor5.best")||0);if(score>best)localStorage.setItem("naukogramy.sektor5.best",String(score));document.getElementById("finalText").textContent="Wynik: "+score+"/100 pkt. Zebrane dowody: "+evidence+"/5. "+(score>=80?"Bardzo dobra robota — znasz oba kwasy i potrafisz wyłapać błędne wzory.":score>=60?"Misja ukończona. Warto jeszcze raz przejść sekcje z błędami.":"Misja ukończona, ale przyda się powtórka wzorów i reszt kwasowych.");document.getElementById("complete").hidden=false}
+document.getElementById("restartBtn").onclick=()=>location.reload();
+</script>
+</body>
+</html>
