@@ -25,6 +25,7 @@ Uruchom z katalogu repozytorium:
 ```sh
 node tests/myko-engine.cjs
 node tests/myko-app.cjs
+node tests/myko-app.cjs --mobile
 ```
 
 Test silnika sprawdza migrację, zachowanie 54 pytań, sześć typów odpowiedzi, punktację, błędy, tropy i ciągłość ścieżki. Test aplikacji używa lekkiego modelu DOM; sprawdza pełne przejście 18 misji, renderery, wielokrotne kliknięcia, zawieszone sesje i anulowanie ruchu. Nie zastępuje wizualnej kontroli w przeglądarce.
@@ -32,3 +33,5 @@ Test silnika sprawdza migrację, zachowanie 54 pytań, sześć typów odpowiedzi
 `qa/` to przeglądarkowy podgląd rzeczywistej gry w ramkach 320×640, 360×740, 390×844 i 1080×720. Ładuje wyłącznie osobny klucz `.qa`, może przygotować starszy zapis i odblokowane krainy. Nie zapisuje aktywności do kalendarza nauki. Ten podgląd nie emuluje sprzętu ani systemu Android.
 
 Materiały sprawdzone w ZPE: fotosynteza, oddychanie, grzyby i porosty; odnośniki w Atlasie. Oddychanie roślin zachodzi w dzień i w nocy; fotosynteza wymaga światła. Świat jest fantastyczny, schematy biologiczne są osobno oznaczone.
+
+Sprawdzenie w Chromium: cała Zielona energia (12 odpowiedzi, 1200 punktów, 3 efekty), sortowanie, dopasowanie, kolejność i schematy, powrót po odświeżeniu, szybka zmiana celu, zmiana krainy podczas ruchu, dwa tropy, błąd i poprawa bez mnożenia punktów, przełącznik dźwięku, stary zapis 300 punktów / jedna misja / karta Atlasu. Układy 320×640, 360×740 i 390×844 bez przewijania poziomego; panel pytań i przyciski w zasięgu ekranu. Test urządzenia fizycznego z Androidem nie był wykonywany. Brak błędów konsoli pochodzących z gry.
