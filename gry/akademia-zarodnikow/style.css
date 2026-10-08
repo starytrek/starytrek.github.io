@@ -5,3 +5,5 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}dialog::backdrop{backdrop-filter:none}}
 #hint::before{content:'';display:inline-block;width:17px;height:20px;vertical-align:middle;margin-right:5px;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 24'%3E%3Cpath d='M6 17C6 13 2 12 2 7a8 8 0 0116 0c0 5-4 6-4 10M6 18h8M7 22h6' fill='%23f2d899' stroke='%23684f61' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")}
 @media(max-width:760px){.place-label{font-size:38px}.place-state{font-size:32px}}
+
+.board-frame{position:absolute;inset:0;display:block}.board-frame>svg{position:absolute;inset:0;margin:auto;max-width:none;overflow:hidden}.place.available .effect-off,.place.current .effect-off{opacity:1;filter:none}.place.locked .effect-off{opacity:.7;filter:saturate(.5)}
