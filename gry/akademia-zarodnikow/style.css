@@ -8,3 +8,4 @@
 
 .board-frame{position:absolute;inset:0;display:block}.board-frame>svg{position:absolute;inset:0;margin:auto;max-width:none;overflow:hidden}.place.available .effect-off,.place.current .effect-off{opacity:1;filter:none}.place.locked .effect-off{opacity:.7;filter:saturate(.5)}
 @media(max-width:760px){.place-label{font-size:42px}.place-state{font-size:34px}}
+@media(max-width:360px){.brand{font-size:13px;line-height:1.15;max-width:130px}.place-label{font-size:44px}.place-state{font-size:38px}}
