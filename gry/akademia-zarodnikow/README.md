@@ -35,3 +35,15 @@ Test silnika sprawdza migrację, zachowanie 54 pytań, sześć typów odpowiedzi
 Materiały sprawdzone w ZPE: fotosynteza, oddychanie, grzyby i porosty; odnośniki w Atlasie. Oddychanie roślin zachodzi w dzień i w nocy; fotosynteza wymaga światła. Świat jest fantastyczny, schematy biologiczne są osobno oznaczone.
 
 Sprawdzenie w Chromium: cała Zielona energia (12 odpowiedzi, 1200 punktów, 3 efekty), sortowanie, dopasowanie, kolejność i schematy, powrót po odświeżeniu, szybka zmiana celu, zmiana krainy podczas ruchu, dwa tropy, błąd i poprawa bez mnożenia punktów, przełącznik dźwięku, stary zapis 300 punktów / jedna misja / karta Atlasu. Układy 320×640, 360×740 i 390×844 bez przewijania poziomego; panel pytań i przyciski w zasięgu ekranu. Test urządzenia fizycznego z Androidem nie był wykonywany. Brak błędów konsoli pochodzących z gry.
+
+## Wyprawa Myko
+
+Checkpoint przed wyprawą: `6ad302838df49c2cda87c4f1e7f1cc1872115137` (zawiera poprawną mobilną geometrię). Nowe pole profilu `expedition` jest dodatkiem do dotychczasowego zapisu v2. Pierwsze uruchomienie wykonuje jednorazową kopię `naukogramy.myko.v1.backup-before-expedition`. Punkty, pytania, rozpoczęte i zawieszone misje pozostają bez zmiany. Dawne ukończone misje otrzymują jednokrotnie fragment mapy i składnik, a ich pokój jest już złożony.
+
+18 pokoi ma własne nazwy, cele i trzy wskazówki do znalezienia oraz dopasowania przez kliknięcie/dotknięcie. Biologiczne zadania uruchamiają urządzenie i wyjście. Stan przeszukania, złożonych części i odpowiedzi pozostaje po odświeżeniu. Każde nowe rozwiązane pytanie zwiększa wygląd Myko; trzy ukończone misje odblokowują kanię, sześć kozaka, dziewięć muchomora. Kania podświetla wskazówki, kozak szybciej chodzi, muchomor raz na krainę chroni przed fabularnym zagrożeniem. Wybór postaci w plecaku.
+
+Każda ukończona misja daje jeden z trzech fragmentów mapy swojej krainy i składnik. Fragmenty trzeba dopasować w plecaku do początku, środka i końca ścieżki. Złożona mapa ujawnia portal na końcu szlaku; pierwszy spacer do sekretu daje dodatkową rosę i zarodnik. Ponowne wizyty nie mnożą łupów. Trzy receptury zużywają różne pary składników. Eliksir przygotowuje pojedynczą osłonę, która automatycznie chroni w niebezpiecznym pokoju. Laboratorium i przystań w krainie mikromieszkańców mają jednokrotne spotkanie. Brak ochrony osłabia Myko i spowalnia spacer, ale nie zabiera postępu ani nie blokuje nauki. Lecznica przywraca siły po naprawczym zadaniu o rolach bakterii, bez naliczania dodatkowych punktów. Bibi jest pożyteczną bakterią.
+
+Moce, osłabienie i eliksiry są wyraźnie podpisaną fikcją; nie stanowią zaleceń dotyczących leczenia. Schematy są biologiczne. Nie wszystkie bakterie lub protisty są przeciwnikami.
+
+Dodatkowy test: `node tests/myko-expedition.cjs` — wszystkie pokoje i mapy, jednorazowe nagrody, migracja, rozwój, receptury i zużywanie ochrony.
