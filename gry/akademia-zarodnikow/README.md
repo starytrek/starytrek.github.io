@@ -51,3 +51,6 @@ Dodatkowy test: `node tests/myko-expedition.cjs` — wszystkie pokoje i mapy, je
 Kontrola wyprawy w Chromium: szukanie i dopasowanie części (także błąd i poprawa), odświeżenie z jedną złożoną częścią, pełna pierwsza misja 4/4 i 400 punktów, wzrost po odkryciu, kania i sokoli wzrok, tworzenie/aktywacja osłony, ręczne złożenie mapy i spacer do sekretu, osłabienie w laboratorium, lecznica z błędną odpowiedzią i poprawą. Cele w pokoju przy 320 px mają 44×44 px; plansza zachowuje viewBox 600×820 bez rozciągania. Testy na fizycznym Androidzie nadal niewykonane.
 
 Potwierdzono również wejście z aktywnym eliksirem: osłona została wykorzystana, postać pozostała zdrowa. Oznaczenie niebezpiecznego miejsca pojawia się na planszy przed wejściem.
+
+## Nocny widok etapu
+Pokój i zagadka otwierają się teraz w szerokim widoku na środku ekranu, nad przyciemnioną mapą. Na komputerze ilustracja i elementy układanki zajmują dwie kolumny; pytanie i odpowiedzi również mają osobne kolumny. Na telefonie etap zajmuje dostępny ekran pod górnym paskiem. Stopka jest krótsza, a podczas zadania znika. Pasek przewijania jest ukryty, ale długie treści nadal można przewijać kółkiem, dotykiem i klawiaturą. Nocna paleta zachowuje kontrast tekstu i jasne biologiczne schematy. Geometria mapy oraz zapis bez zmian.
