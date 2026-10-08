@@ -9,5 +9,8 @@ assert.equal(run('profile().stars'),7200);assert.equal(run('profile().complete.l
 run('closeQuest();choosePlace(2)');assert(run('motion!==null'));run('choosePlace(1)');assert.equal(run('arrival'),1);run('setWorld(3)');assert.equal(run('motion'),null);assert.equal(ids.quest.hidden,true);
 // Changing missions suspends unfinished state. Returning restores it.
 run('startQuest(0);profile().active.step=1;profile().active.hinted=true;closeQuest();startQuest(1);closeQuest();startQuest(0)');assert.equal(run('profile().active.step'),1);assert.equal(run('profile().active.hinted'),true);run('openBook();worldMap()');
-assert.equal(ids.board.attrs.viewBox,process.argv.includes('--mobile')?'0 0 1000 1080':'0 0 1000 800');
+assert.equal(ids.board.attrs.viewBox,process.argv.includes('--mobile')?'0 0 600 820':'0 0 1000 800');
+assert.equal(ids.board.attrs.preserveAspectRatio,'xMidYMid meet');
+assert.equal(ids.trail.attrs.transform,'');
+for(let n=0;n<3;n++){run('choosePlace('+n+')');clock+=6000;run('animate('+clock+')');const point=run('boardAt(E.nodeS['+n+'])');const xy=ids.hero.attrs.transform.match(/translate\(([^ ]+) ([^)]+)\)/);assert(Math.hypot(+xy[1]-point.x,+xy[2]-point.y)<1e-8);assert(Math.abs(run('pos')-run('E.nodeS['+n+']'))<1e-8);}
 console.log('PASS: app startup, backup/migration, continuous movement, repeated clicks, 18 complete missions and 72 UI renderings, no double award, solved-state resume, suspended sessions, world switch cancels motion, Atlas and world map');
