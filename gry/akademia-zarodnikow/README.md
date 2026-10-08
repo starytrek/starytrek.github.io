@@ -47,3 +47,7 @@ Każda ukończona misja daje jeden z trzech fragmentów mapy swojej krainy i sk�
 Moce, osłabienie i eliksiry są wyraźnie podpisaną fikcją; nie stanowią zaleceń dotyczących leczenia. Schematy są biologiczne. Nie wszystkie bakterie lub protisty są przeciwnikami.
 
 Dodatkowy test: `node tests/myko-expedition.cjs` — wszystkie pokoje i mapy, jednorazowe nagrody, migracja, rozwój, receptury i zużywanie ochrony.
+
+Kontrola wyprawy w Chromium: szukanie i dopasowanie części (także błąd i poprawa), odświeżenie z jedną złożoną częścią, pełna pierwsza misja 4/4 i 400 punktów, wzrost po odkryciu, kania i sokoli wzrok, tworzenie/aktywacja osłony, ręczne złożenie mapy i spacer do sekretu, osłabienie w laboratorium, lecznica z błędną odpowiedzią i poprawą. Cele w pokoju przy 320 px mają 44×44 px; plansza zachowuje viewBox 600×820 bez rozciągania. Testy na fizycznym Androidzie nadal niewykonane.
+
+Potwierdzono również wejście z aktywnym eliksirem: osłona została wykorzystana, postać pozostała zdrowa. Oznaczenie niebezpiecznego miejsca pojawia się na planszy przed wejściem.
