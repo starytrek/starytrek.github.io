@@ -27,4 +27,4 @@ Study.attach({testId:VARIANT?'protisty-cykle-b-v1':'protisty-cykle-a-v1',total:1
  answers:()=>protistyLegacy.finished?protistyLegacy.items.map(q=>({no:Math.ceil(Number(q.id)/2),selected:protistyLegacy.answers[q.id]===undefined?-1:q.options.indexOf(protistyLegacy.answers[q.id])})):[],
  restore:saved=>{protistyLegacy.start();for(const q of protistyLegacy.items){const v=saved[Math.ceil(Number(q.id)/2)];if(v>=0)protistyLegacy.setAnswer(q.id,q.options[v])}protistyLegacy.render()},canFinish:()=>protistyLegacy.finished});
 }
-</script><script src="../../assets/protisty-open.js?v=2"></script></html>
+</script><script src="../../assets/protisty-open.js?v=3"></script></html>
