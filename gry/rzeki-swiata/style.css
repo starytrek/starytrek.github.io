@@ -4,3 +4,5 @@
 
 .river.found .river-line{stroke:#8ef1ad;stroke-width:3.5}.river.found .river-dot{fill:#2aa96c}.river.shown .river-line,.river.revealed .river-line{stroke:#ffcf52;stroke-width:3.5}.river.shown .river-dot,.river.revealed .river-dot{fill:#f2bf35}.river.solved{pointer-events:none}.river.solved .river-hit,.river.solved .river-dot-hit{pointer-events:none}.river.solved:hover .river-line{stroke-width:3.5}
 #map{margin:90px 5px 64px;height:calc(100% - 154px);width:calc(100% - 10px)}@media(max-width:760px){#map{margin:102px 3px 62px;height:calc(100% - 164px);width:calc(100% - 6px)}}
+
+.river-entry{display:flex;gap:4px;min-width:0}.river-entry button{flex:1;min-width:0}.river-info{display:flex;align-items:center;justify-content:center;flex:0 0 40px;min-height:44px;border:1px solid #bed1dd;border-radius:10px;text-decoration:none;font-size:20px;background:white}.river-info:hover{background:#d5eaf4}#river-list{max-height:none;overflow:visible}@media(max-width:760px){#river-list{max-height:none}.river-entry button{overflow-wrap:anywhere}.river-info{flex-basis:36px}}
