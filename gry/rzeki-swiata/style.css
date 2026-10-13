@@ -6,3 +6,21 @@
 #map{margin:90px 5px 64px;height:calc(100% - 154px);width:calc(100% - 10px)}@media(max-width:760px){#map{margin:102px 3px 62px;height:calc(100% - 164px);width:calc(100% - 6px)}}
 
 .river-entry{display:flex;gap:4px;min-width:0}.river-entry button{flex:1;min-width:0}.river-info{display:flex;align-items:center;justify-content:center;flex:0 0 40px;min-height:44px;border:1px solid #bed1dd;border-radius:10px;text-decoration:none;font-size:20px;background:white}.river-info:hover{background:#d5eaf4}#river-list{max-height:none;overflow:visible}@media(max-width:760px){#river-list{max-height:none}.river-entry button{overflow-wrap:anywhere}.river-info{flex-basis:36px}}
+
+/* Układ z mapą pośrodku i listami rzek po obu stronach. */
+.app{grid-template-columns:minmax(155px,205px) minmax(0,1fr) 300px;grid-template-areas:'rail map side'}
+.river-rail{grid-area:rail;min-width:0;overflow:auto;padding:16px 10px;background:#f5f9fc;border-right:1px solid #c5d7e0}
+.river-rail h2{font-size:16px;margin:0 0 10px;padding:0 4px}
+#river-list-left{display:grid;gap:5px}
+#river-list-left .river-entry button{width:100%;text-align:left;font-size:12px;padding:8px;display:flex;justify-content:space-between;gap:4px}
+#river-list-left small{font-size:10px;color:var(--muted);text-align:right}
+#river-list-left button[aria-current=true]{background:#d1eee2;border-color:var(--green)}
+#river-list{max-height:calc(100dvh - 300px);overflow:auto}
+#list-panel{margin-bottom:12px}
+@media(max-width:760px){
+ .app{display:flex;flex-direction:column;min-height:100dvh;height:auto}
+ .river-rail{display:none}
+ aside{order:1}
+ .map-panel{order:0}
+ #river-list{max-height:none;overflow:visible}
+}
