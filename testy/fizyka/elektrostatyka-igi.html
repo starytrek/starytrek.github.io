@@ -62,6 +62,6 @@ document.getElementById('finish').addEventListener('click',()=>{if(!chosen.every
 document.getElementById('reset').addEventListener('click',()=>{chosen.fill(null);initializeOrder();step=0;finished=false;runId=crypto.randomUUID();document.getElementById('result').hidden=true;document.getElementById('questions').hidden=false;render()});
 initializeOrder();render();
 </script>
-<script src="../../assets/activity.js?v=2"></script><script src="../../assets/study.js"></script>
+<script src="../../assets/activity.js?v=3"></script><script src="../../assets/study.js"></script>
 <script>window.quizTracker=Study.attach({testId:"elektrostatyka-iga-v1",total:Q.length,root:"#questions",finish:"#finish",reset:"#reset",answers:()=>chosen.map((v,i)=>({no:i+1,selected:v===null?-1:v})).filter(x=>x.selected>=0),restore:saved=>{for(const [n,v] of Object.entries(saved)){const i=Number(n)-1;if(i>=0&&i<Q.length&&v>=0)chosen[i]=v}const first=order.findIndex(i=>chosen[i]===null);step=first<0?Q.length-1:first;render()},canFinish:()=>chosen.every(x=>x!==null)});</script>
 </body></html>
