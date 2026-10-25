@@ -190,14 +190,14 @@ const studioPresets=[
 ];
 let studioIndex=0,studioState={...studioPresets[0],heading:'Koci Kącik'},studioDocument='';
 function studioEscape(text){return text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function studioCSS(){const f=studioFonts.find(f=>f.id===studioState.font);return `/* Cała strona: tło, litery i krój pisma */
+function studioCSS(state=studioState){const f=studioFonts.find(f=>f.id===state.font);return `/* Cała strona: tło, litery i krój pisma */
 body {
   margin: 0;
   padding: 24px;
-  background: ${studioState.bg};
-  color: ${studioState.text};
+  background: ${state.bg};
+  color: ${state.text};
   font-family: ${f.css};
-  font-size: ${studioState.size}px;
+  font-size: ${state.size}px;
   line-height: 1.6;
 }
 
@@ -211,21 +211,21 @@ h1 {
 h2 { font-size: 1.35em; }
 p { margin: 10px 0; }
 header {
-  border-bottom: 2px solid ${studioState.accent};
+  border-bottom: 2px solid ${state.accent};
   padding-bottom: 18px;
 }
 
 /* Odnośnik jako czytelny przycisk */
 nav { margin-top: 16px; }
 a {
-  color: ${studioState.accent};
+  color: ${state.accent};
   text-decoration-thickness: 2px;
 }
 nav a {
   display: inline-block;
   padding: 7px 16px;
-  border: 1px solid ${studioState.accent};
-  border-radius: ${studioState.radius}px;
+  border: 1px solid ${state.accent};
+  border-radius: ${state.radius}px;
   text-decoration: none;
 }
 
@@ -234,21 +234,21 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
-  border-radius: ${studioState.radius}px;
+  border-radius: ${state.radius}px;
   margin: 16px 0;
 }
 
 /* .karta wybiera elementy class="karta" */
 .karta {
-  border: 1px solid ${studioState.accent};
+  border: 1px solid ${state.accent};
   border-left-width: 5px;
-  border-radius: ${studioState.radius}px;
+  border-radius: ${state.radius}px;
   padding: 4px 14px;
   margin: 10px 0;
 }
 li { padding: 3px 0; }
 section {
-  border-top: 1px solid ${studioState.accent};
+  border-top: 1px solid ${state.accent};
   margin-top: 24px;
   padding-top: 10px;
 }
